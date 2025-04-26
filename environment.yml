@@ -1,0 +1,10 @@
+name: viz_proj_env
+dependencies:
+  - python=3.13
+  - pip
+  - pip:
+    - plotly
+    - pandas
+    - dash
+    - dash-bootstrap-components
+    - gunicorn
