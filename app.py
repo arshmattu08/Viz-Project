@@ -96,11 +96,19 @@ html.Div([
         "padding":"12px 20px 12px 20px",
         "font-size":"14px",
         "border": "2px solid white",
-        "position":"relative","left":"20%"})])
+        "position":"relative","left":"20%"})]),
 
  # Visualization Space
 
+html.Div([
+    dcc.Graph(id= "my-graph",style = {
+        "width":"45%",
+        "position":"relative","left":"34%",
+        "margin-top":"59px"
+    })
 
+]
+)
 
 
 
@@ -111,4 +119,4 @@ html.Div([
 
 
 if (__name__ == '__main__'):
-    app.run_server(debug= True)
+    app.run(debug= True)
