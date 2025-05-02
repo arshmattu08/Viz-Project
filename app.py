@@ -5,6 +5,25 @@ import plotly.express as px
 
 from dash import Dash, html, dcc, Input, Output, callback, State
 
+# Data 
+
+url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv5T0GjnV3amAPzMDv2hsgAL1P_XeQBK_mlBzxwy9XAXvgo-J6_CBGKoC0_0St0L2aFldI8ztEvZgD/pub?output=csv"
+
+df = pd.read_csv(url)
+
+#visualization code
+
+box_fig = px.box(df, x = 'sex', y = 'best3bench_kg', color = 'sex', hover_data= 'age')
+
+box_fig.update_layout(
+    title = 'Distribution of upper body strength in men and women',
+    template = 'simple_white',
+    yaxis=dict(range=[0, df['best3bench_kg'].max()]),
+    xaxis_title = 'Sex',
+    yaxis_title = 'Bench Press in KG'
+)
+
+
 # app code
 app = Dash(__name__)
 app.title = "Powerlifting Viz App" 
@@ -101,10 +120,11 @@ html.Div([
  # Visualization Space
 
 html.Div([
-    dcc.Graph(id= "my-graph",style = {
+    dcc.Graph(id= "my-graph", figure = box_fig, style = {
         "width":"45%",
         "position":"relative","left":"34%",
         "margin-top":"59px"
+        
     })
 
 ]
