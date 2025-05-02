@@ -3,13 +3,18 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
-from dash import Dash, html, dcc, Input, Output, callback, State, dash
+from dash import Dash, html, dcc, Input, Output, callback, State, dash, dash_table
 
 # Data 
 
 url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv5T0GjnV3amAPzMDv2hsgAL1P_XeQBK_mlBzxwy9XAXvgo-J6_CBGKoC0_0St0L2aFldI8ztEvZgD/pub?output=csv"
 
 df = pd.read_csv(url)
+
+# when viewing data, make sure no NA values show up
+df_cleaned = df.dropna()
+df_sampled = df_cleaned.sample(n=10)
+
 
 # Visualization Code
 
@@ -151,7 +156,9 @@ html.Div([
             "position":"relative","left":"28%",
             "margin-top":"59px",}),
 
-        dcc.Markdown(id = "msg", style={"position":"relative","left":"100px","font-weight":'bold','color':'#6eb7ff'})
+        dcc.Markdown(id = "msg", style={"position":"relative","left":"100px","font-weight":'bold','color':'#6eb7ff'}),
+
+        html.Div(id='data-table-container', style= {'display': 'none', 'padding': '30px', 'width': '80%', 'margin': 'auto'})
     ])
 
 ], style = {"background-color":"#2E2E2E","color":"white","text-align":"center"}) # End of Outer Div
@@ -201,7 +208,25 @@ def show_scatter2(n):
     return dash.no_update,""
 
 
-
+# Dataset Display
+@callback(
+    Output('data-table-container', 'children'),
+    Output('data-table-container', 'style'),
+    Input('view_data', 'n_clicks'),
+    prevent_initial_call=True)
+def display_table(n):
+    if n and n%2 != 0:
+        table = dash_table.DataTable(
+            data=df_sampled.to_dict('records'),
+            columns=[{"name": str(col), "id": str(col)} for col in df_sampled.columns],
+            page_size=10,
+            style_table={'overflowX': 'auto',"width":"60%","color":"blue","position":"relative","left":"403px",
+                         "margin-top":"30px","margin-bottom":"40px"},
+            style_cell={'textAlign': 'left', 'padding': '5px'},
+            style_header={'backgroundColor': 'lightgrey', 'fontWeight': 'bold'}
+        )
+        return table, {'display': 'block'}
+    return dash.no_update, {'display': 'none'}
 
 if (__name__ == '__main__'):
     app.run(debug= True)
