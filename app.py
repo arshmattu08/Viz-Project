@@ -19,6 +19,7 @@ df_sampled = df_cleaned.sample(n=10)
 
 # App code
 app = Dash(__name__, suppress_callback_exceptions=True)
+server = app.server
 app.title = "Powerlifting Viz App" 
 
 # Outer Div
