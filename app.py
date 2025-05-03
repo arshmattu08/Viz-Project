@@ -6,9 +6,9 @@ import plotly.express as px
 from dash import Dash, html, dcc, Input, Output, callback, State, dash, dash_table, callback_context, exceptions
 
 # Data 
-
 url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSv5T0GjnV3amAPzMDv2hsgAL1P_XeQBK_mlBzxwy9XAXvgo-J6_CBGKoC0_0St0L2aFldI8ztEvZgD/pub?output=csv"
 
+#fixing date column
 df = pd.read_csv(url)
 df['date'] = pd.to_datetime(df['date'], format= "%m/%d/%y").dt.date
 
@@ -17,75 +17,7 @@ df_cleaned = df.dropna()
 df_sampled = df_cleaned.sample(n=10)
 
 
-# Visualization Code
-
-# Strength Distribution
-box_fig = px.box(df, x = 'sex', y = 'best3bench_kg', color = 'sex', hover_data= 'age')
-
-box_fig.update_layout(
-    title = 'Distribution of upper body strength in men and women',
-    template = 'simple_white',
-    yaxis=dict(range=[0, df['best3bench_kg'].max()]),
-    xaxis_title = 'Sex',
-    yaxis_title = 'Bench Press in KG'
-)
-box_fig.add_annotation(
-    x= 0.32,
-    y= 210,
-    text="Compare the variation in two groups",
-    showarrow=True,
-    arrowhead=2,
-    arrowwidth=1.5,
-    ax=75, ay= -30,
-    font=dict(size=13, color="black", weight = 'bold') )
-
-
-# Bodyweight and Strength
-
-scatter_fig = px.scatter(df, x = 'bodyweight_kg', y = 'best3bench_kg',color ='sex')
-scatter_fig.update_layout(
-    template = 'simple_white',
-    # xaxis=dict(range=[0, power_data['bodyweight_kg'].max()]),
-    yaxis=dict(range=[0, df['best3bench_kg'].max()]),
-    xaxis_title = 'Bodyweight in KG',
-    yaxis_title = 'Benchpress in KG')
-
-scatter_fig.add_annotation(
-    x= 90,
-    y= 360,
-    text="Clear rising trend in bodyweight and bench",
-    showarrow=True,
-    arrowhead=2,
-    arrowwidth=1.5,
-    ax=-60, ay= -30,
-    font=dict(size=11, color="black", weight = 'bold') )
-
-# Age and Strength
-
-fig = px.scatter(df, x = "age", y = "best3bench_kg", color = 'sex') # default color map seems to work well
-
-fig.update_layout(
-    plot_bgcolor='white',
-    xaxis=dict(range=[0, df['age'].max()]),
-    yaxis=dict(range=[0, df['best3bench_kg'].max()]),
-    title_text = 'Age vs bench press strength in men and women',
-    xaxis_title = 'Age',
-    yaxis_title = 'Bench Press in KG',
-    legend_title = 'Sex')
-
-
-fig.add_annotation(
-    x= 55,
-    y= 340,
-    text="Performance begins to decrease",
-    showarrow=True,
-    arrowhead=2,
-    arrowwidth=1.5,
-    ax=60, ay= -30,
-    font=dict(size=11, color="black", weight = 'bold'))
-
-
-# app code
+# App code
 app = Dash(__name__, suppress_callback_exceptions=True)
 app.title = "Powerlifting Viz App" 
 
@@ -110,29 +42,17 @@ html.Div([
             "cursor": "pointer",
             "font-size":"14px"}),
 
-        html.H2("Filters", style = {
+        html.H2("Filter", style = {
             "color":"white",
             "position":"relative","top":"140px",
             "font-size":"39px",
             "font-family":"Roboto, sans-serif"}),
 
-        dcc.Dropdown(id = "year-dropdown",options=[], placeholder="Year",style = {
-            "color":"white",
-            "position":"relative","top":"70px","left":"12px",
-            "width":"88px"
-            
-        }),
-         dcc.Dropdown(id = "age-dropdown",options=[], placeholder="Age",style = {
-            "color":"white",
-            "position":"relative","top":"85px","left":"12px",
-            "width":"88px"
-            
-        }),
          dcc.Dropdown(id = "gender-dropdown",options=[
              {'label':'Male','value':'M'},
              {'label':'Female','value':'F'}
          ], placeholder="Gender", value = 'M',style = {
-            "position":"relative","top":"100px","left":"12px",
+            "position":"relative","top":"75px","left":"12px",
             "width":"98px",
             "color":"black"})],
 # sidebar styling
