@@ -86,7 +86,7 @@ fig.add_annotation(
 
 
 # app code
-app = Dash(__name__)
+app = Dash(__name__, suppress_callback_exceptions=True)
 app.title = "Powerlifting Viz App" 
 
 # Outer Div
@@ -203,7 +203,7 @@ html.Div([
     Output('msg','children'),
     Input('gender-dropdown','value'),
     Input('active-graph','data'),
-    prevent_initial_call='initial_duplicate')
+    prevent_initial_call= True)
 def show_box(drop_value,active_graph):
     df_filtered = df.loc[df['sex'] == drop_value,:]
     box_fig = px.box(df_filtered, x = 'sex', y = 'best3bench_kg', color = 'sex', hover_data= 'age')
@@ -239,7 +239,7 @@ def show_box(drop_value,active_graph):
     Output('msg','children', allow_duplicate=True),
     Input('gender-dropdown','value'),
     Input('active-graph','data'),
-    prevent_initial_call='initial_duplicate')
+    prevent_initial_call=True)
 def show_scatter(drop_value,active_graph):
     df_filtered = df.loc[df['sex'] == drop_value,:]
 
@@ -272,13 +272,39 @@ def show_scatter(drop_value,active_graph):
 # Age and Strength
 @callback(
     Output('my-graph','figure',allow_duplicate=True),
-    Output('msg','children',allow_duplicate=True),
+    Output('msg','children', allow_duplicate=True),
+    Input('gender-dropdown','value'),
+    Input('active-graph','data'),
     Input('third-button','n_clicks'),
-    prevent_initial_call='initial_duplicate')
-def show_scatter2(n):
-    if n is not None and n > 0:
+    prevent_initial_call= True)
+def show_scatter2(drop_value,active_graph,n):
+    df_filtered = df.loc[df['sex'] == drop_value,:]
+
+    if active_graph == 'third-button':
+        fig = px.scatter(df_filtered, x = "age", y = "best3bench_kg", color = 'sex') 
+
+        fig.update_layout(
+            plot_bgcolor='white',
+            xaxis=dict(range=[0, df['age'].max()]),
+            yaxis=dict(range=[0, df['best3bench_kg'].max()]),
+            title_text = 'Age vs bench press strength in men and women',
+            xaxis_title = 'Age',
+            yaxis_title = 'Bench Press in KG',
+            legend_title = 'Sex')
+
+
+        fig.add_annotation(
+            x= 55,
+            y= 340,
+            text="Performance begins to decrease",
+            showarrow=True,
+            arrowhead=2,
+            arrowwidth=1.5,
+            ax=60, ay= -30,
+            font=dict(size=11, color="black", weight = 'bold'))
+
         msg = '''Age seems to play a key role in how much weight is lifted on bench press. It can be seen that  
-        after age of approx. 40, performance begins to decrease.'''
+            after age of approx. 40, performance begins to decrease.'''
         return fig,msg
     return dash.no_update,""
 
