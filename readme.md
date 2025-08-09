@@ -1,1 +1,2 @@
-Hello, this is my visualization project on powerlifting.
+## Dash App: https://viz-project.onrender.com
+Note that the app may take a few minutes to start up.
